@@ -4,16 +4,22 @@ import { logger } from '../shared/logger';
 
 export const errorHandler = (err: Error, req: Request, res: Response, _next: NextFunction) => {
   if (err instanceof AppError) {
-    return res.status(err.statusCode).json({
+    const responsePayload: any = {
       success: false,
       error: {
         code: err.code,
         message: err.message,
       },
-    });
+    };
+    // If field errors are attached, add them to the response
+    if ((err as any).fieldErrors) {
+      responsePayload.error.fields = (err as any).fieldErrors;
+    }
+    return res.status(err.statusCode).json(responsePayload);
   }
 
-  logger.error({ err, requestId: req.requestId });
+  // Unexpected errors
+  logger.error({ err, requestId: req.headers['x-request-id'] });
   return res.status(500).json({
     success: false,
     error: {
