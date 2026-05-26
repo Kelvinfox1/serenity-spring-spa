@@ -1,0 +1,48 @@
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: spa
+      POSTGRES_PASSWORD: spa
+      POSTGRES_DB: spa_bookings
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U spa -d spa_bookings"]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      retries: 5
+
+  app:
+    build: .
+    ports:
+      - '4000:4000'
+      - '5555:5555'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      CORS_ORIGIN: '*'
+      DATABASE_URL: postgresql://spa:spa@postgres:5432/spa_bookings?schema=public
+      REDIS_URL: redis://redis:6379
+    command: >
+      sh -c "npx prisma migrate deploy && node dist/server.js"
+
+volumes:
+  pgdata:
