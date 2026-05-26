@@ -25,16 +25,26 @@ echo "NODE_ENV is set to: ${NODE_ENV:-NOT SET}"
 echo "DATABASE_URL is set to: ${DATABASE_URL:+[REDACTED]}"
 echo "REDIS_URL is set to: ${REDIS_URL:+[REDACTED]}"
 
-# Run Prisma migrations
+# --- Database Setup ---
 echo ""
-echo "--- Running database migrations ---"
-npx prisma migrate deploy 2>&1
-MIGRATE_EXIT_CODE=$?
+echo "--- Running database setup ---"
+
+# Check if migration directory exists and is not empty
+if [ -d "prisma/migrations" ] && [ "$(ls -A prisma/migrations 2>/dev/null)" ]; then
+  echo "Migration directory found. Running prisma migrate deploy..."
+  npx prisma migrate deploy 2>&1
+  MIGRATE_EXIT_CODE=$?
+else
+  echo "No migrations found. Using prisma db push to create tables..."
+  npx prisma db push --accept-data-loss 2>&1
+  MIGRATE_EXIT_CODE=$?
+fi
 
 if [ $MIGRATE_EXIT_CODE -ne 0 ]; then
-    echo "WARNING: Migration failed with exit code $MIGRATE_EXIT_CODE. Attempting to start server anyway..."
+    echo "ERROR: Database setup failed with exit code $MIGRATE_EXIT_CODE."
+    exit 1
 else
-    echo "Migrations completed successfully."
+    echo "Database setup completed successfully."
 fi
 
 # Start the Node.js server

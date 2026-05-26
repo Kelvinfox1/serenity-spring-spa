@@ -7,6 +7,7 @@ import { apiLimiter, bookingLimiter } from './middleware/rateLimiter';
 import { requestLogger } from './middleware/requestLogger'; // if you have one
 
 const app = express();
+app.set('trust proxy', 1); 
 
 // Global middleware
 app.use(requestIdMiddleware);
