@@ -10,7 +10,7 @@ const app = express();
 
 // Global middleware
 app.use(requestIdMiddleware);
-app.use(securityMiddleware);
+app.use(...securityMiddleware);
 app.use(express.json({ limit: '1mb' }));
 
 // Request logging (if any)
