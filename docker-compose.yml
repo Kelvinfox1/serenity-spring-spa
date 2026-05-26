@@ -38,7 +38,7 @@ services:
       - .env
     environment:
       NODE_ENV: production
-      CORS_ORIGIN: http://localhost:5173,https://serentyspringspa.com
+      CORS_ORIGIN: http://localhost:5173,https://serentyspringspa.com,http://192.168.2.107:5173
       DATABASE_URL: postgresql://spa:spa@postgres:5432/spa_bookings?schema=public
       REDIS_URL: redis://redis:6379
     command: >
