@@ -23,8 +23,9 @@ coverage/
 .env.local
 .env.test
 .env.production
-# lockfiles (ignore if you intentionally track them)
-# Uncomment if you don't want to commit lockfiles
+# lockfiles
+# Only uncomment if you do NOT want to commit them.
+# Docker build uses npm ci which requires package-lock.json.
 # package-lock.json
 # yarn.lock
 # pnpm-lock.yaml
@@ -70,12 +71,12 @@ venv/
 # Databases
 *.sqlite3
 *.db
-*.sql
 *.sqlite
+*.sql
+!prisma/migrations/**/*.sql
 
 # Docker
 docker-compose.override.yml
-docker-compose.*.yml
 
 # Secrets, keys, certs
 *.pem
@@ -105,8 +106,6 @@ dist-*/
 build-*/
 out-*/
 
-# Optional: ignore coverage reports and test snapshots
-coverage/
 *.snap
 
 # End

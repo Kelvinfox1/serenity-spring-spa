@@ -7,6 +7,10 @@ import { emailQueue } from '../../workers/emailQueue';
 export class BookingService {
   constructor(private repo: BookingRepository) {}
 
+  async getAllBookings() {
+    return this.repo.findAll();
+  }
+
   async createBooking(input: CreateBookingInput) {
     const isDuplicate = await this.repo.checkDuplicate(input.email, input.date, input.time, input.experience);
     if (isDuplicate) {

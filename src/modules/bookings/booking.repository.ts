@@ -28,6 +28,10 @@ export class BookingRepository {
     return this.prisma.booking.findUnique({ where: { referenceId } });
   }
 
+  async findAll() {
+    return this.prisma.booking.findMany({ orderBy: { createdAt: 'desc' } });
+  }
+
   async checkDuplicate(email: string, date: string, time: string, experience: string): Promise<boolean> {
     const existing = await this.prisma.booking.findFirst({
       where: {

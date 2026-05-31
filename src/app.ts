@@ -3,7 +3,7 @@ import { securityMiddleware } from './middleware/security';
 import { requestIdMiddleware } from './middleware/requestId';
 import { errorHandler } from './middleware/errorHandler';
 import { bookingRoutes } from './modules/bookings/booking.routes';
-import { apiLimiter, bookingLimiter } from './middleware/rateLimiter';
+import { apiLimiter } from './middleware/rateLimiter';
 import { requestLogger } from './middleware/requestLogger'; // if you have one
 
 const app = express();
@@ -23,8 +23,8 @@ app.get('/health', (_req, res) => res.json({ status: 'ok' }));
 // Global rate limiter for all other routes
 app.use(apiLimiter);
 
-// Booking routes with stricter limiter
-app.use('/api/v1/bookings', bookingLimiter, bookingRoutes);
+// Booking routes
+app.use('/api/v1/bookings', bookingRoutes);
 
 // 404
 app.use((_req, res) => {

@@ -9,4 +9,9 @@ export class BookingController {
     const result = await this.service.createBooking(req.validatedBody);
     res.status(201).json(result);
   });
+
+  getAll = asyncHandler(async (_req: Request, res: Response) => {
+    const bookings = await this.service.getAllBookings();
+    res.json({ success: true, data: bookings });
+  });
 }
