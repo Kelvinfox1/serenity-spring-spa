@@ -1,8 +1,12 @@
--- CreateEnum
-CREATE TYPE "BookingStatus" AS ENUM ('PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED');
+-- CreateEnum (idempotent)
+DO $$ BEGIN
+  CREATE TYPE "BookingStatus" AS ENUM ('PENDING', 'CONFIRMED', 'CANCELLED', 'COMPLETED');
+EXCEPTION
+  WHEN duplicate_object THEN NULL;
+END $$;
 
--- CreateTable
-CREATE TABLE "bookings" (
+-- CreateTable (idempotent)
+CREATE TABLE IF NOT EXISTS "bookings" (
     "id" SERIAL NOT NULL,
     "reference_id" TEXT NOT NULL,
     "first_name" VARCHAR(50) NOT NULL,
@@ -22,5 +26,5 @@ CREATE TABLE "bookings" (
     CONSTRAINT "bookings_pkey" PRIMARY KEY ("id")
 );
 
--- CreateIndex
-CREATE UNIQUE INDEX "bookings_reference_id_key" ON "bookings"("reference_id");
+-- CreateIndex (idempotent)
+CREATE UNIQUE INDEX IF NOT EXISTS "bookings_reference_id_key" ON "bookings"("reference_id");
